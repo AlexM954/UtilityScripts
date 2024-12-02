@@ -1,5 +1,6 @@
 import os
 import glob
+import time
 import shutil
 import argparse
 
@@ -18,6 +19,8 @@ def move(source, destination, pattern="*", recursive=False):
         # List all files that match the pattern.
         filepath_list = glob.glob(pattern, recursive=recursive)
 
+        t0 = time.perf_counter()
+
         # Move each file to the destination.
         for filepath in filepath_list:
             if os.path.isfile(filepath):
@@ -25,6 +28,14 @@ def move(source, destination, pattern="*", recursive=False):
                     destination, os.path.basename(filepath)
                 )
                 shutil.move(filepath, destinationpath)
+
+        t1 = time.perf_counter()
+
+        print(
+            f"Succesfully moved {len(filepath_list)} files in",
+            f"{(t1 - t0):.3f} seconds."
+        )
+
     else:
         print(
             f"The directory {source} does not exist."
