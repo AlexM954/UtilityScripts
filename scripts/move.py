@@ -5,7 +5,7 @@ import shutil
 import argparse
 
 
-def move(source, destination, pattern="*", recursive=False):
+def move(source, destination, pattern="*", recursive=False, directories=False):
     # Check if the source folder exists.
     if os.path.isdir(source):
         # Make the destination path if it does not exist.
@@ -23,7 +23,12 @@ def move(source, destination, pattern="*", recursive=False):
 
         # Move each file to the destination.
         for filepath in filepath_list:
-            if os.path.isfile(filepath):
+            if os.path.isfile(filepath) and directories is False:
+                destinationpath = os.path.join(
+                    destination, os.path.basename(filepath)
+                )
+                shutil.move(filepath, destinationpath)
+            elif not os.path.isfile(filepath) and directories is True:
                 destinationpath = os.path.join(
                     destination, os.path.basename(filepath)
                 )
@@ -56,11 +61,13 @@ def main():
     parser.add_argument(
         "--recursive", "-r", action="store_true", help="Recursively include \
         subdirectories.")
+    parser.add_argument(
+        "--directory", "-dir", action="store_true", help="Move directories")
 
     args = parser.parse_args()
 
-    move(args.source, args.destination,
-         pattern=args.pattern, recursive=args.recursive)
+    move(args.source, args.destination, pattern=args.pattern,
+         recursive=args.recursive, directories=args.directory)
 
 
 if __name__ == "__main__":
